@@ -5,7 +5,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -51,6 +54,15 @@ public class ChooseAreaActivity extends Activity {
 protected void onCreate(Bundle savedInstanceState) {
 	// TODO Auto-generated method stub
 	super.onCreate(savedInstanceState);
+	
+	SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
+	if(prefs.getBoolean("city_selected",false)){//判断标志位,true代表已经选择过了城市,直接跳转到WeatherActivity
+		Intent intent =new Intent(this,WeatherActivity.class);
+		startActivity(intent);
+		finish();
+		return;
+		
+	}
 	requestWindowFeature(Window.FEATURE_NO_TITLE);
 	setContentView(R.layout.choose_area);
 	
@@ -70,6 +82,12 @@ protected void onCreate(Bundle savedInstanceState) {
 			}else if(currentLevel==LEVEL_CITY){
 			selectedCity=cityList.get(position);
 			    queryCounties();
+			}else if(currentLevel ==LEVEL_COUNTY){
+				String countyCode =countyList.get(position).getCountyCode();
+				Intent intent=new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+				intent.putExtra("county_code", countyCode);//将选中的县级代号传递到WeatherActivity
+				startActivity(intent);
+				finish();
 			}
 			
 		}
@@ -143,7 +161,7 @@ private void queryFromServer(final String code, final String type) {
 	if(!TextUtils.isEmpty(code)){
 		address="http://www.weather.com.cn/data/list3/city"+code+".xml";
 	}else{
-		//address="http://www.baidu.com";
+	
 		address ="http://www.weather.com.cn/data/list3/city.xml";
 	}
 	showProgressDialog();//显示进度对话框

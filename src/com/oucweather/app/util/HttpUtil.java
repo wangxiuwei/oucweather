@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.os.StrictMode;
+
 
 //提供HTTP网络请求的公共类
 public class HttpUtil {
@@ -19,12 +21,12 @@ public class HttpUtil {
 				try {
 					
 					URL url =new URL(address);
+					StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build()); 
 					connection =(HttpURLConnection)url.openConnection();
 					connection.setRequestMethod("GET");
 					connection.setConnectTimeout(8000);
-					connection.setReadTimeout(8000);
-					connection.setDoInput(true);
-					connection.setDoOutput(true);
+				    connection.setReadTimeout(8000);
+				
 					InputStream in =connection.getInputStream();
 				  BufferedReader reader =new BufferedReader(new InputStreamReader(in));//读取输入流
 				  StringBuffer response =new StringBuffer();
